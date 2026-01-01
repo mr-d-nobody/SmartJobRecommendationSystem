@@ -61,10 +61,3 @@ def recommend_jobs(user_skills):
         recommendations.sort(key=lambda x:x["score"],reverse=True)
     return recommendations
 
-if __name__ == "__main__":
-    user_skills = ["python", "sql", "excel"]
-
-    results = recommend_jobs(user_skills)
-
-    for r in results[:5]:
-        print(r)
