@@ -58,6 +58,6 @@ def recommend_jobs(user_skills):
         })
 
 
-        recommendations.sort(key=lambda x:x["score"],reverse=True)
+    recommendations.sort(key=lambda x:x["score"],reverse=True)
     return recommendations
 
