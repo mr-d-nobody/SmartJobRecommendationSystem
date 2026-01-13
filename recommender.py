@@ -61,3 +61,21 @@ def recommend_jobs(user_skills):
     recommendations.sort(key=lambda x:x["score"],reverse=True)
     return recommendations
 
+def get_all_skills():
+    conn = sqlite3.connect("jobs.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT required_skills, optional_skills FROM jobs")
+    rows = cursor.fetchall()
+    conn.close()
+
+    skills = set()
+
+    for req, opt in rows:
+        for block in (req, opt):
+            if block:
+                for item in block.split(","):
+                    skill = item.split(":")[0].strip()
+                    skills.add(skill)
+
+    return skills
