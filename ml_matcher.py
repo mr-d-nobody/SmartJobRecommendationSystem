@@ -3,18 +3,17 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 def build_job_text(title, required_skills, optional_skills):
-    """
-    Converts job data into plain text for ML
-    """
-    req = " ".join(required_skills.keys())
-    opt = " ".join(optional_skills.keys())
+    req = " ".join([f"{skill} " * weight for skill, weight in required_skills.items()])
+    opt = " ".join([f"{skill} " * weight for skill, weight in optional_skills.items()])
 
     text = f"""
-    Job title is {title}.
-    Required skills are {req}.
-    Optional skills include {opt}.
+    Job title {title}.
+    This role requires {req}.
+    Preferred skills include {opt}.
+    Responsibilities involve real-world application of these technologies.
     """
     return text.lower()
+
 
 
 def compute_ml_scores(resume_text, job_texts):
@@ -28,7 +27,8 @@ def compute_ml_scores(resume_text, job_texts):
 
     vectorizer = TfidfVectorizer(
         stop_words="english",
-        max_df=0.9,
+        ngram_range=(1, 2),
+        max_df=0.95,
         min_df=1
     )
 

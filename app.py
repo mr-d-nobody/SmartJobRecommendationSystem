@@ -41,6 +41,8 @@ if st.button("Get Job Recommendations"):
     else:
         text_skills = [s.strip().lower() for s in skill_text.split(",") if s.strip()]
         user_skills = list(set(text_skills + checked_skills))
+    if resume_text:
+        resume_text += " " + " ".join(user_skills)
 
     if not user_skills:
         st.warning("No skills detected. Please upload a resume or enter skills.")
