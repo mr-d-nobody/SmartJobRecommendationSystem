@@ -1,6 +1,7 @@
 import streamlit as st
- 
-from resume_parser import extract_text_from_pdf, extract_skills_from_text
+from skills_taxonomy import SKILL_TAXONOMY
+from skill_extractor import extract_skills_from_taxonomy
+from resume_parser import extract_text_from_pdf
 from recommender import recommend_jobs, get_all_skills
 
 st.title("Job Recommendation System")
@@ -28,8 +29,10 @@ if st.button("Get Job Recommendations"):
     # CASE 1: Resume uploaded
     if resume_file:
         text = extract_text_from_pdf(resume_file)
-        all_skills = get_all_skills()
-        user_skills = extract_skills_from_text(text, all_skills)
+        user_skills = extract_skills_from_taxonomy(
+            text,
+            SKILL_TAXONOMY
+        )
 
         st.write("Extracted skills from resume:")
         st.write(user_skills)
