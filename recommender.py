@@ -1,15 +1,22 @@
+import os
 import sqlite3
 from ml_matcher import build_job_text, compute_ml_scores
 
 
 # -------------------------------------------------
-# DB SAFETY: ensure table + seed data if needed
+# Absolute DB path (CRITICAL for Streamlit Cloud)
+# -------------------------------------------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "jobs.db")
+
+
+# -------------------------------------------------
+# DB bootstrap (schema + seed)
 # -------------------------------------------------
 def ensure_db():
-    conn = sqlite3.connect("jobs.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Create table if missing
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS jobs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,16 +26,15 @@ def ensure_db():
     )
     """)
 
-    # Check if table is empty
     cursor.execute("SELECT COUNT(*) FROM jobs")
     count = cursor.fetchone()[0]
 
     conn.commit()
     conn.close()
 
-    # Seed jobs only if empty
+    # Seed only once
     if count == 0:
-        import seed_jobs  # safe: runs once only
+        import seed_jobs
 
 
 # -------------------------------------------------
@@ -47,27 +53,20 @@ def parse_skills(skill_string):
 
 
 def calculate_job_score(user_skills, required_skills, optional_skills):
-    # Required skills
-    matched_required = 0
+    matched_required = sum(
+        weight for skill, weight in required_skills.items()
+        if skill in user_skills
+    )
     total_required = sum(required_skills.values())
+    required_score = matched_required / total_required if total_required else 0
 
-    for skill, weight in required_skills.items():
-        if skill in user_skills:
-            matched_required += weight
-
-    required_score = (matched_required / total_required) if total_required else 0
-
-    # Optional skills
-    matched_optional = 0
+    matched_optional = sum(
+        weight for skill, weight in optional_skills.items()
+        if skill in user_skills
+    )
     total_optional = sum(optional_skills.values())
+    optional_score = matched_optional / total_optional if total_optional else 0
 
-    for skill, weight in optional_skills.items():
-        if skill in user_skills:
-            matched_optional += weight
-
-    optional_score = (matched_optional / total_optional) if total_optional else 0
-
-    # Final weighted score
     final_score = (0.7 * required_score) + (0.3 * optional_score)
     return round(final_score * 100, 2)
 
@@ -76,9 +75,9 @@ def calculate_job_score(user_skills, required_skills, optional_skills):
 # Main recommender
 # -------------------------------------------------
 def recommend_jobs(user_skills, resume_text=None):
-    ensure_db()  # 🔑 ALWAYS enforce DB state first
+    ensure_db()  # 🔑 GUARANTEES DB + TABLE + DATA
 
-    conn = sqlite3.connect("jobs.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -111,13 +110,11 @@ def recommend_jobs(user_skills, resume_text=None):
 
         job_texts.append(job_text)
 
-    # ML similarity
-    if resume_text:
-        ml_scores = compute_ml_scores(resume_text, job_texts)
-    else:
-        ml_scores = [0] * len(job_texts)
+    ml_scores = (
+        compute_ml_scores(resume_text, job_texts)
+        if resume_text else [0] * len(job_texts)
+    )
 
-    # Combine scores
     for job, ml_score in zip(parsed_jobs, ml_scores):
         final_score = round(
             (0.6 * job["rule_score"]) + (0.4 * ml_score),
@@ -139,12 +136,12 @@ def recommend_jobs(user_skills, resume_text=None):
 
 
 # -------------------------------------------------
-# Skill extraction helper
+# Skill helper
 # -------------------------------------------------
 def get_all_skills():
     ensure_db()
 
-    conn = sqlite3.connect("jobs.db")
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute(
@@ -154,12 +151,10 @@ def get_all_skills():
     conn.close()
 
     skills = set()
-
     for req, opt in rows:
         for block in (req, opt):
             if block:
                 for item in block.split(","):
-                    skill = item.split(":")[0].strip()
-                    skills.add(skill)
+                    skills.add(item.split(":")[0].strip())
 
     return skills
