@@ -1,9 +1,15 @@
+import os
+import subprocess
+
+# --- Ensure DB exists on Streamlit Cloud ---
+if not os.path.exists("jobs.db"):
+    subprocess.run(["python", "db_setup.py"], check=True)
+    subprocess.run(["python", "seed_jobs.py"], check=True)
 import streamlit as st
 from skills_taxonomy import SKILL_TAXONOMY
 from skill_extractor import extract_skills_from_taxonomy
 from resume_parser import extract_text_from_pdf
 from recommender import recommend_jobs 
-
 
 st.title("Job Recommendation System")
 st.write("Enter your skills (comma separated) and select additional skills:")
