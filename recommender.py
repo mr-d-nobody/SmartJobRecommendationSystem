@@ -1,60 +1,103 @@
+import sqlite3
 from ml_matcher import build_job_text, compute_ml_scores
 
 
+# -------------------------------------------------
+# DB SAFETY: ensure table + seed data if needed
+# -------------------------------------------------
+def ensure_db():
+    conn = sqlite3.connect("jobs.db")
+    cursor = conn.cursor()
+
+    # Create table if missing
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS jobs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        required_skills TEXT NOT NULL,
+        optional_skills TEXT
+    )
+    """)
+
+    # Check if table is empty
+    cursor.execute("SELECT COUNT(*) FROM jobs")
+    count = cursor.fetchone()[0]
+
+    conn.commit()
+    conn.close()
+
+    # Seed jobs only if empty
+    if count == 0:
+        import seed_jobs  # safe: runs once only
+
+
+# -------------------------------------------------
+# Utility functions
+# -------------------------------------------------
 def parse_skills(skill_string):
-    skills={}
+    skills = {}
     if not skill_string:
         return skills
-    
-    for skill in skill_string.split(','):
-        name,weight=skill.split(':')
-        skills[name.strip()]=int(weight)
+
+    for skill in skill_string.split(","):
+        name, weight = skill.split(":")
+        skills[name.strip()] = int(weight)
 
     return skills
 
-def calculate_job_score(user_skills,required_skills,optional_skills):
-    #required skill scoring
+
+def calculate_job_score(user_skills, required_skills, optional_skills):
+    # Required skills
     matched_required = 0
     total_required = sum(required_skills.values())
 
-    for skill,weight in required_skills.items():
+    for skill, weight in required_skills.items():
         if skill in user_skills:
             matched_required += weight
 
     required_score = (matched_required / total_required) if total_required else 0
 
-    #optional skill scoring
+    # Optional skills
     matched_optional = 0
     total_optional = sum(optional_skills.values())
-    for skill,weight in optional_skills.items():
+
+    for skill, weight in optional_skills.items():
         if skill in user_skills:
             matched_optional += weight
 
     optional_score = (matched_optional / total_optional) if total_optional else 0
 
-    #final score calculation
+    # Final weighted score
     final_score = (0.7 * required_score) + (0.3 * optional_score)
-    return round(final_score*100,2)  #return score as percentage
+    return round(final_score * 100, 2)
 
-import sqlite3
 
+# -------------------------------------------------
+# Main recommender
+# -------------------------------------------------
 def recommend_jobs(user_skills, resume_text=None):
+    ensure_db()  # 🔑 ALWAYS enforce DB state first
+
     conn = sqlite3.connect("jobs.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT title, required_skills, optional_skills FROM jobs")
+
+    cursor.execute(
+        "SELECT title, required_skills, optional_skills FROM jobs"
+    )
     jobs = cursor.fetchall()
     conn.close()
 
     recommendations = []
     job_texts = []
-
     parsed_jobs = []
 
     for title, req_str, opt_str in jobs:
         required = parse_skills(req_str)
         optional = parse_skills(opt_str)
 
-        rule_score = calculate_job_score(user_skills, required, optional)
+        rule_score = calculate_job_score(
+            user_skills, required, optional
+        )
 
         job_text = build_job_text(title, required, optional)
 
@@ -68,13 +111,13 @@ def recommend_jobs(user_skills, resume_text=None):
 
         job_texts.append(job_text)
 
-   
+    # ML similarity
     if resume_text:
         ml_scores = compute_ml_scores(resume_text, job_texts)
     else:
         ml_scores = [0] * len(job_texts)
 
-    # --- FINAL COMBINATION ---
+    # Combine scores
     for job, ml_score in zip(parsed_jobs, ml_scores):
         final_score = round(
             (0.6 * job["rule_score"]) + (0.4 * ml_score),
@@ -95,11 +138,18 @@ def recommend_jobs(user_skills, resume_text=None):
     return recommendations
 
 
+# -------------------------------------------------
+# Skill extraction helper
+# -------------------------------------------------
 def get_all_skills():
+    ensure_db()
+
     conn = sqlite3.connect("jobs.db")
     cursor = conn.cursor()
 
-    cursor.execute("SELECT required_skills, optional_skills FROM jobs")
+    cursor.execute(
+        "SELECT required_skills, optional_skills FROM jobs"
+    )
     rows = cursor.fetchall()
     conn.close()
 
