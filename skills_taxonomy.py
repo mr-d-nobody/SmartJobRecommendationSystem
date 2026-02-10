@@ -1,11 +1,12 @@
 SKILL_TAXONOMY = {
 
     # ===================== AI / ML =====================
-    "ml": {
+    "machine learning": {
         "keywords": [
             "machine learning", "ml", "predictive modeling",
             "supervised learning", "unsupervised learning",
-            "feature engineering", "model training"
+            "feature engineering", "model training",
+            "scikit-learn", "model evaluation"
         ],
         "category": "ai"
     },
@@ -13,15 +14,17 @@ SKILL_TAXONOMY = {
     "deep learning": {
         "keywords": [
             "deep learning", "cnn", "rnn", "lstm",
-            "transformers", "neural networks", "backpropagation"
+            "transformers", "neural networks",
+            "pytorch", "tensorflow", "backpropagation"
         ],
         "category": "ai"
     },
 
     "nlp": {
         "keywords": [
-            "nlp", "natural language processing", "text mining",
-            "language models", "llm", "tokenization"
+            "nlp", "natural language processing",
+            "text mining", "language models",
+            "llm", "tokenization", "hugging face"
         ],
         "category": "ai"
     },
@@ -29,7 +32,8 @@ SKILL_TAXONOMY = {
     "computer vision": {
         "keywords": [
             "computer vision", "image processing",
-            "object detection", "image classification", "opencv"
+            "object detection", "image classification",
+            "opencv"
         ],
         "category": "ai"
     },
@@ -38,7 +42,8 @@ SKILL_TAXONOMY = {
     "statistics": {
         "keywords": [
             "statistics", "statistical analysis",
-            "hypothesis testing", "eda", "exploratory data analysis"
+            "hypothesis testing", "eda",
+            "exploratory data analysis"
         ],
         "category": "data"
     },
@@ -46,15 +51,17 @@ SKILL_TAXONOMY = {
     "data analysis": {
         "keywords": [
             "data analysis", "data analytics",
-            "business analytics", "reporting"
+            "business analytics", "data cleaning",
+            "reporting"
         ],
         "category": "data"
     },
 
     "data visualization": {
         "keywords": [
-            "data visualization", "charts", "dashboards",
-            "matplotlib", "seaborn"
+            "data visualization", "dashboards",
+            "matplotlib", "seaborn",
+            "power bi", "tableau"
         ],
         "category": "data"
     },
@@ -71,7 +78,7 @@ SKILL_TAXONOMY = {
     "java": {
         "keywords": [
             "java", "spring", "spring boot",
-            "jvm", "hibernate"
+            "hibernate", "jvm"
         ],
         "category": "programming"
     },
@@ -79,7 +86,7 @@ SKILL_TAXONOMY = {
     "javascript": {
         "keywords": [
             "javascript", "js", "es6",
-            "frontend scripting"
+            "node.js", "frontend scripting"
         ],
         "category": "programming"
     },
@@ -92,8 +99,17 @@ SKILL_TAXONOMY = {
         "category": "programming"
     },
 
+    "data structures and algorithms": {
+        "keywords": [
+            "data structures", "algorithms",
+            "dsa", "problem solving",
+            "competitive programming"
+        ],
+        "category": "programming"
+    },
+
     # ===================== WEB =====================
-    "frontend": {
+    "frontend development": {
         "keywords": [
             "frontend development", "ui development",
             "client side", "web ui"
@@ -111,7 +127,7 @@ SKILL_TAXONOMY = {
 
     "html": {
         "keywords": [
-            "html", "html5", "markup language"
+            "html", "html5"
         ],
         "category": "web"
     },
@@ -125,7 +141,7 @@ SKILL_TAXONOMY = {
     },
 
     # ===================== BACKEND =====================
-    "backend": {
+    "backend development": {
         "keywords": [
             "backend development", "server side",
             "api development", "rest api"
@@ -136,7 +152,7 @@ SKILL_TAXONOMY = {
     "django": {
         "keywords": [
             "django", "django rest framework",
-            "drf", "backend framework"
+            "drf"
         ],
         "category": "backend"
     },
@@ -145,6 +161,14 @@ SKILL_TAXONOMY = {
         "keywords": [
             "flask", "python backend",
             "microframework"
+        ],
+        "category": "backend"
+    },
+
+    "node.js": {
+        "keywords": [
+            "node.js", "nodejs",
+            "express", "backend javascript"
         ],
         "category": "backend"
     },
@@ -160,8 +184,8 @@ SKILL_TAXONOMY = {
 
     "nosql": {
         "keywords": [
-            "nosql", "mongodb", "document database",
-            "firebase"
+            "nosql", "mongodb",
+            "document database", "firebase"
         ],
         "category": "database"
     },
@@ -178,7 +202,8 @@ SKILL_TAXONOMY = {
     "ci/cd": {
         "keywords": [
             "ci/cd", "continuous integration",
-            "continuous deployment", "pipelines"
+            "continuous deployment", "pipelines",
+            "jenkins", "github actions"
         ],
         "category": "devops"
     },
@@ -200,9 +225,10 @@ SKILL_TAXONOMY = {
         "category": "cloud"
     },
 
-    "cloud": {
+    "cloud computing": {
         "keywords": [
-            "cloud computing", "cloud infrastructure",
+            "cloud computing",
+            "cloud infrastructure",
             "cloud services"
         ],
         "category": "cloud"
@@ -227,16 +253,20 @@ SKILL_TAXONOMY = {
     # ===================== SECURITY =====================
     "cyber security": {
         "keywords": [
-            "cyber security", "information security",
-            "security analysis", "threat analysis"
+            "cyber security",
+            "information security",
+            "security analysis",
+            "threat analysis"
         ],
         "category": "security"
     },
 
     "networking": {
         "keywords": [
-            "networking", "computer networks",
-            "tcp/ip", "network protocols"
+            "networking",
+            "computer networks",
+            "tcp/ip",
+            "network protocols"
         ],
         "category": "security"
     }

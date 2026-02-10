@@ -65,10 +65,13 @@ jobs = [
     ("Automation Tester", "testing:5,python:3", "selenium:3"),
     ("Technical Support Engineer", "linux:4,networking:4", "cloud:2"),
 
-    # ===== GENERAL TECH =====
-    ("Software Engineer", "programming:5", "python:3"),
-    ("Junior Software Engineer", "programming:4", "python:2"),
-    ("IT Engineer", "linux:4,networking:4", "cloud:2"),
+# ===== GENERAL SOFTWARE ENGINEERING ROLES =====
+("Software Engineer", "programming:5", "data structures and algorithms:4", "python:3", "c++:2", "software design:3"),
+
+("Junior Software Engineer", "programming fundamentals:4", "python:3", "problem solving:3", "git:2"),
+
+("IT Engineer", "linux administration:4", "computer networking:4", "cloud fundamentals:2", "system troubleshooting:3"),
+
 ]
 
 
